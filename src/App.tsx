@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Dashboard } from './components/Dashboard'
 import { Audit } from './components/Audit'
+import { Investigate } from './components/Investigate'
 import { Settings } from './components/Settings'
 import { initTelegram } from './lib/telegram'
-import { Home, ClipboardList, Settings as SettingsIcon, Sparkles } from 'lucide-react'
+import { Home, ClipboardList, Settings as SettingsIcon, Sparkles, Search } from 'lucide-react'
 
-type Tab = 'dashboard' | 'audit' | 'settings'
+type Tab = 'dashboard' | 'audit' | 'investigate' | 'settings'
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('dashboard')
@@ -45,6 +46,7 @@ export default function App() {
       <main className="flex-1 overflow-y-auto px-4 pb-24">
         {tab === 'dashboard' && <Dashboard tgUser={tgUser} />}
         {tab === 'audit' && <Audit />}
+        {tab === 'investigate' && <Investigate />}
         {tab === 'settings' && <Settings tgUser={tgUser} />}
       </main>
 
@@ -53,6 +55,7 @@ export default function App() {
         <div className="glass-strong rounded-2xl px-2 py-2 flex items-center justify-around">
           <TabButton icon={<Home className="h-5 w-5" />} label="Дашборд" active={tab === 'dashboard'} onClick={() => setTab('dashboard')} />
           <TabButton icon={<ClipboardList className="h-5 w-5" />} label="Аудит" active={tab === 'audit'} onClick={() => setTab('audit')} />
+          <TabButton icon={<Search className="h-5 w-5" />} label="Проверка" active={tab === 'investigate'} onClick={() => setTab('investigate')} />
           <TabButton icon={<SettingsIcon className="h-5 w-5" />} label="Профиль" active={tab === 'settings'} onClick={() => setTab('settings')} />
         </div>
       </nav>
