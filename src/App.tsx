@@ -1,78 +1,119 @@
-import { useEffect, useState } from 'react'
-import { Dashboard } from './components/Dashboard'
-import { Audit } from './components/Audit'
-import { Investigate } from './components/Investigate'
-import { Settings } from './components/Settings'
-import { initTelegram } from './lib/telegram'
-import { Home, ClipboardList, Settings as SettingsIcon, Sparkles, Search } from 'lucide-react'
-
-type Tab = 'dashboard' | 'audit' | 'investigate' | 'settings'
+import { useState } from "react"
 
 export default function App() {
-  const [tab, setTab] = useState<Tab>('dashboard')
-  const [tgUser, setTgUser] = useState<{ first_name: string; id: number } | null>(null)
+  const [step, setStep] = useState<"home" | "result">("home")
+  const [loading, setLoading] = useState(false)
+  const [count, setCount] = useState(0)
 
-  useEffect(() => {
-    const tg = initTelegram()
-    if (tg?.initDataUnsafe?.user) {
-      setTgUser({
-        first_name: tg.initDataUnsafe.user.first_name || 'Друг',
-        id: tg.initDataUnsafe.user.id,
-      })
-    }
-  }, [])
+  const handleStart = () => {
+    setLoading(true)
+    setTimeout(() => {
+      setLoading(false)
+      setCount(Math.floor(Math.random() * 20) + 5)
+      setStep("result")
+    }, 1500)
+  }
 
   return (
-    <div className="min-h-screen flex flex-col safe-top">
-      {/* Top bar */}
-      <header className="px-4 pt-4 pb-2 flex items-center justify-between">
+    <main className="min-h-screen bg-bg text-ink">
+      <header className="px-4 py-4 border-b border-bg-border flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-tide-400 to-tide-500 flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-ocean-900" />
-          </div>
-          <div>
-            <div className="text-sm font-bold leading-none">Buildo</div>
-            <div className="text-[10px] text-white/50">Личный кабинет</div>
-          </div>
+          <span className="text-2xl">📸</span>
+          <span className="font-bold text-lg">Buildo Headshots</span>
         </div>
-        {tgUser && (
-          <div className="text-xs text-white/60">
-            👋 {tgUser.first_name}
-          </div>
-        )}
+        <span className="text-xs text-ink-dim">v1.0</span>
       </header>
 
-      {/* Content */}
-      <main className="flex-1 overflow-y-auto px-4 pb-24">
-        {tab === 'dashboard' && <Dashboard tgUser={tgUser} />}
-        {tab === 'audit' && <Audit />}
-        {tab === 'investigate' && <Investigate />}
-        {tab === 'settings' && <Settings tgUser={tgUser} />}
-      </main>
+      <div className="px-4 py-6 max-w-md mx-auto">
+        {step === "home" && (
+          <div className="space-y-6">
+            <div className="text-center pt-8">
+              <div className="text-7xl mb-4">📸</div>
+              <h1 className="text-3xl font-bold mb-3 gradient-text">
+                Бизнес-фото на аву
+              </h1>
+              <p className="text-ink-muted text-sm leading-relaxed">
+                AI-аватары для резюме, соцсетей и LinkedIn за 30 секунд
+              </p>
+            </div>
 
-      {/* Bottom tab bar */}
-      <nav className="fixed bottom-0 left-0 right-0 safe-bottom px-3 pb-3 pt-2">
-        <div className="glass-strong rounded-2xl px-2 py-2 flex items-center justify-around">
-          <TabButton icon={<Home className="h-5 w-5" />} label="Дашборд" active={tab === 'dashboard'} onClick={() => setTab('dashboard')} />
-          <TabButton icon={<ClipboardList className="h-5 w-5" />} label="Аудит" active={tab === 'audit'} onClick={() => setTab('audit')} />
-          <TabButton icon={<Search className="h-5 w-5" />} label="Проверка" active={tab === 'investigate'} onClick={() => setTab('investigate')} />
-          <TabButton icon={<SettingsIcon className="h-5 w-5" />} label="Профиль" active={tab === 'settings'} onClick={() => setTab('settings')} />
-        </div>
-      </nav>
-    </div>
-  )
-}
+            <div className="space-y-3">
+              <div key={0} className="flex items-start gap-3 p-3 rounded-xl bg-bg-surface border border-bg-border">
+                  <div className="text-2xl flex-shrink-0">📤</div>
+                  <div>
+                    <div className="font-semibold text-sm">Загрузи фото</div>
+                    <div className="text-xs text-ink-muted mt-0.5">Одно селфи в хорошем свете — достаточно</div>
+                  </div>
+                </div>,
+              <div key={1} className="flex items-start gap-3 p-3 rounded-xl bg-bg-surface border border-bg-border">
+                  <div className="text-2xl flex-shrink-0">🎨</div>
+                  <div>
+                    <div className="font-semibold text-sm">Выбери стиль</div>
+                    <div className="text-xs text-ink-muted mt-0.5">8 образов: деловой, креативный, casual, tech</div>
+                  </div>
+                </div>,
+              <div key={2} className="flex items-start gap-3 p-3 rounded-xl bg-bg-surface border border-bg-border">
+                  <div className="text-2xl flex-shrink-0">✨</div>
+                  <div>
+                    <div className="font-semibold text-sm">Получи 20 аватаров</div>
+                    <div className="text-xs text-ink-muted mt-0.5">За 30 секунд. Скачай лучшие в 4K</div>
+                  </div>
+                </div>
+            </div>
 
-function TabButton({ icon, label, active, onClick }: { icon: React.ReactNode; label: string; active: boolean; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all ${
-        active ? 'bg-tide-400/20 text-tide-300' : 'text-white/50 hover:text-white/80'
-      }`}
-    >
-      {icon}
-      <span className="text-[10px] font-medium">{label}</span>
-    </button>
+            <button
+              onClick={handleStart}
+              disabled={loading}
+              className="w-full h-12 rounded-xl font-semibold text-white btn-primary disabled:opacity-50"
+            >
+              {loading ? "Генерируем..." : "Попробовать бесплатно →"}
+            </button>
+
+            <p className="text-xs text-center text-ink-dim">
+              5 бесплатных генераций · без карты
+            </p>
+          </div>
+        )}
+
+        {step === "result" && (
+          <div className="space-y-4 pt-8">
+            <div className="text-center">
+              <div className="text-6xl mb-3">✨</div>
+              <h2 className="text-2xl font-bold mb-2">Готово!</h2>
+              <p className="text-ink-muted text-sm">
+                Сгенерировано {count} вариантов
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="aspect-square rounded-xl border border-bg-border flex items-center justify-center text-4xl"
+                  style={{ background: `linear-gradient(135deg, var(--color-primary), var(--color-accent))`, opacity: 0.1 + (i * 0.2) }}
+                >
+                  📸
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setStep("home")}
+              className="w-full h-12 rounded-xl font-semibold border border-bg-border hover:bg-bg-surface"
+            >
+              ← Назад
+            </button>
+
+            <button className="w-full h-12 rounded-xl font-semibold text-white btn-primary">
+              Скачать все
+            </button>
+          </div>
+        )}
+      </div>
+
+      <footer className="px-4 py-4 text-center text-xs text-ink-dim border-t border-bg-border mt-8">
+        © 2026 Buildo Headshots · Часть экосистемы Buildo
+      </footer>
+    </main>
   )
 }

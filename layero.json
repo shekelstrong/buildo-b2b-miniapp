@@ -1,0 +1,9 @@
+{
+  "$schema": "https://layero.ru/schema/layero-v1.json",
+  "framework": "vite",
+  "install": "echo 'skip — dist is precommitted'",
+  "build": "echo 'skip — dist is precommitted'",
+  "output": "dist",
+  "node": "20",
+  "static": true
+}
